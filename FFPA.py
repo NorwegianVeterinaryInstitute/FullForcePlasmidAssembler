@@ -499,9 +499,10 @@ if args.i_raw_illumina != "" and args.i_trimmed_illumina != "":
 
 
 
-cmd = "mkdir {}/tmp/nanoporeReads".format(target_dir)
+cmd = "mkdir {}tmp/nanoporeReads".format(target_dir)
 os.system(cmd)
-cmd = "mv {}/tmp/{}* {}/tmp/nanoporeReads/.".format(target_dir, nanopore_name, target_dir)
+
+cmd = "cp {}tmp/{}* {}tmp/nanoporeReads/.".format(target_dir, nanopore_name, target_dir)
 os.system(cmd)
 
 cmd = "mv {}/tmp/kraken_report_illumina_1percenthits {}/tmp/illuminaPE_trimmed".format(target_dir, target_dir)
@@ -528,8 +529,6 @@ if nanopore_name[-6:] == ".fastq":
 else:
     prefix_nanopore = nanopore_name[0:-9]
 print (prefix_nanopore)
-cmd = "mv {}/tmp/nanoporeReads/{}.10000.nanofilt {}/tmp/nanoporeReads/{}.10000.nanofilt.fastq.gz".format(target_dir, nanopore_name, target_dir, prefix_nanopore)
-os.system(cmd)
 cmd = "rm {}/tmp/nanoporeReads/{}.fastq.gz.fastq".format(target_dir, prefix_nanopore)
 os.system(cmd)
 cmd = "mv {}/tmp/nanoporeReads/{}_trimmed.fastq {}/tmp/nanoporeReads/{}_trimmed.fastq.gz".format(target_dir, nanopore_name, target_dir, prefix_nanopore)
