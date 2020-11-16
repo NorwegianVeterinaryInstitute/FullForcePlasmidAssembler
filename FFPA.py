@@ -96,8 +96,12 @@ elif args.i_raw_nanopore != "":
     nanopore_name = args.i_raw_nanopore.split('/')[-1]
 
 #Unzip nanoporereads, since qcat etc. cant handle .gz
-cmd = "gunzip -c {} > {}/tmp/{}.fastq".format(args.i_raw_nanopore, target_dir, nanopore_name)
-os.system(cmd)
+if args.i_raw_illumina[-3:] == ".gz":
+    cmd = "gunzip -c {} > {}/tmp/{}.fastq".format(args.i_raw_nanopore, target_dir, nanopore_name)
+    os.system(cmd)
+else:
+    cmd = "cp {} {}/tmp/{}".format(args.i_raw_nanopore, target_dir, nanopore_name)
+    os.system(cmd)
 
 print ("Trimmomatic started")
 if args.i_raw_illumina != "":
