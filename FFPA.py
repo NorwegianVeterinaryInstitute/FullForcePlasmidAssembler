@@ -96,11 +96,13 @@ elif args.i_raw_nanopore != "":
     nanopore_name = args.i_raw_nanopore.split('/')[-1]
 
 #Unzip nanoporereads, since qcat etc. cant handle .gz
-if args.i_raw_illumina[-3:] == ".gz":
-    cmd = "gunzip -c {} > {}/tmp/{}.fastq".format(args.i_raw_nanopore, target_dir, nanopore_name)
+if args.i_raw_nanopore[-3:] == ".gz":
+    cmd = "gunzip -c {} > {}/tmp/{}".format(args.i_raw_nanopore, target_dir, nanopore_name[:-3])
+    unzipnanopore = nanopore_name[:-3]
     os.system(cmd)
 else:
     cmd = "cp {} {}/tmp/{}".format(args.i_raw_nanopore, target_dir, nanopore_name)
+    unzipnanopore = nanopore_name
     os.system(cmd)
 
 print ("Trimmomatic started")
@@ -142,23 +144,24 @@ if args.i_raw_illumina != "":
 
 if args.i_raw_nanopore != "":
     print ("Qcat is running, be patient :) ")
-    cmd = "docker run -it -v {}/tmp/{}.fastq:/tmp/{}.fastq --name qcat_container{} mcfonsecalab/qcat qcat -f /tmp/{}.fastq -o /tmp/{}_trimmed.fastq".format(target_dir,nanopore_name, nanopore_name, jobid, nanopore_name, nanopore_name)
+    cmd = "docker run -it -v {}/tmp/{}:/tmp/{} --name qcat_container{} mcfonsecalab/qcat qcat -f /tmp/{} -o /tmp/{}_trimmed.fastq".format(target_dir,unzipnanopore, unzipnanopore, jobid, unzipnanopore, unzipnanopore)
     os.system(cmd)
     print("qcat complete") ########### MISSING
     proc = subprocess.Popen("docker ps -aqf \"name={}{}\"".format("qcat_container", jobid), shell=True, stdout=subprocess.PIPE, )
     output = proc.communicate()[0]
     id = output.decode().rstrip()
 
-    cmd = "docker cp {}:/tmp/{}_trimmed.fastq {}/tmp/.".format(id, nanopore_name, target_dir)
+    cmd = "docker cp {}:/tmp/{}_trimmed.fastq {}/tmp/.".format(id, unzipnanopore, target_dir)
     os.system(cmd)
 
     #Remove container after download
     cmd = "docker container rm {}".format(id)
     os.system(cmd)
 
-    trimmed_nanopore = "{}_trimmed.fastq".format(nanopore_name)
+    trimmed_nanopore = "{}_trimmed.fastq".format(unzipnanopore)
 else:
     trimmed_nanopore = nanopore_name
+
 
 #NANOPLOT
 cmd = "docker run --name nanoplot{} -it -v {}/tmp/{}:/tmp/{} nanozoo/nanoplot:1.32.0--1ae6f5d NanoPlot --fastq_rich /tmp/{} -o /tmp/nanoplots/ --N50 -p {} -t 8".format(jobid, target_dir, trimmed_nanopore, trimmed_nanopore, trimmed_nanopore, trimmed_nanopore)
@@ -341,7 +344,7 @@ cmd = "rm {}/tmp/krakenoutput_nanopore".format(target_dir)
 os.system(cmd)
 
 
-
+sys.exit("pre assembly")
 #HERE
 #Unicycler nanopore
 
