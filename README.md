@@ -30,12 +30,12 @@ Finally, Abcricate with plasmidfinder_db and resfinder_db is run.
 
 ## Docker images used are:
 
-fjukstad/trimmomatic
-mcfonsecalab/qcat
-nanozoo/nanoplot:1.32.0--1ae6f5d
-nanozoo/fastqc
-mcfonsecalab/nanofilt
-flowcraft/kraken:1.0-0.1
-nanozoo/unicycler:0.4.7-0--c0404e6
-replikation/abricate
+fjukstad/trimmomatic  
+mcfonsecalab/qcat  
+nanozoo/nanoplot:1.32.0--1ae6f5d  
+nanozoo/fastqc  
+mcfonsecalab/nanofilt  
+flowcraft/kraken:1.0-0.1  
+nanozoo/unicycler:0.4.7-0--c0404e6  
+replikation/abricate  
 
